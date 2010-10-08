@@ -1,0 +1,38 @@
+<process name="test2">
+
+	<begin id="begin">
+		<task name="task1">
+			<assigment assignmentInvoker="assignment1.assigment">
+			</assigment>
+		</task>
+		<transit id="trans1" to="work">
+		</transit>
+	</begin>
+
+	<fork id="fork1">
+		<transit id="trans2" to="work1">
+
+		</transit>
+		<transit id="trans3" to="work2">
+
+		</transit>
+	</fork>
+	<processNode id="work1">
+		<task name="task2"></task>
+		<transit id="trans2" to="join1">
+
+		</transit>
+	</processNode>
+	<processNode id="work2">
+		<task name="task2"></task>
+		<transit id="trans2" to="join1">
+
+		</transit>
+	</processNode>
+	<join id="join1">
+		<transit id="trans2" to="end">
+
+		</transit>
+	</join>
+	<end id="end"></end>
+</process>

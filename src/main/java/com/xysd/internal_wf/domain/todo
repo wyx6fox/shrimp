@@ -1,0 +1,109 @@
+* decision认为就是fork，不必限制只能有一个出路线。 （不需要join 的fork？）
+
+必须要，既然不记录流程的状态，何必必须join呢？ 一切由用户自己控制，没有流程结束的概念。
+
+对于用户来说，流程结束意味着没有当前用户waited 任务，业务件的状态为完结。
+
+
+* controller做transit时，要对condition做判断
+
+
+
+* 流程变量是个难点，最好加参数，而不是做副本。每个流转路线的变量会否变化？ 如果变化，那就
+
+ 抽出来作为参数，否则放到一个Context中，太乱了，去掉variable这个复杂的东西，jbpm失败的
+ 设计不要引入进来。 流程的变量最关键就是当前ProcessInstanceId,projectId.
+ 
+ 
+ * 记录尽可能多的日志，这是个问题，是否应该有个日志表？应该有，否则日后很难追查日志。
+ 
+ // 2009-10-27 23:10
+ 
+ * TDD时注意，侧重于驱动流程的流转，而先不考虑transition时的callback。
+ 
+ 这些callback其实就是业务操作，可以忽略，因为这些代码在业务逻辑里面可以写（比如业务状态改变等等）
+ 
+ 
+ * 除fork节点外，每个ProcessNode能创建一个任务（但不限制一个节点只能有一个任务，比如 mutipleTaskNode)，如果一个节点有多个任务，则这个节点肯定是fork节点。
+ 
+ * 每次transit时，context必须拷贝一个副本，否则会互相覆盖和冲突。（比如forkId，parentForkId）
+ 
+ * taskInstance引入记录 forkId,(ownForkId为fork类型任务拥有，表示为自己产生的forkId，不是context传递下来的)的概念 。 context中记录currForkId. 
+ 
+   进入 fork节点时，生成一个唯一的forkId，（fork0-->(fork1-work1-fork2-work2) )
+   放入context中，如果context中原来已经有forkId，则把此forkId记录成parentForkId.
+   
+   fork.enter(),如果发现context中有forkId，则建立一个类型为"fork" 的fork task,这个taskInstance.ownForkId=context.forkId,taskInstance.forkId=context.parentForkId
+   
+   task.status=OPEN.
+   
+   
+  * 创建普通Task时，只要发现context.forkId不为NULL，则记录下这个forkId。每次完成任务做transit时，必须把当前task的forkId传入context中。
+  
+  * 到达Join.transitDerived(),Join.isCanEnter()方法默认行为是检查所有属于当前forkId的task是否都已完成，如果都已完成，则返回true。 
+  
+    用户可以配置一个canEnter="invoker:myBean.canEnter"，然后会直接调用myBean.canEnter方法。
+    
+    如果canEnter返回true，在joinNode.leave（）方法中，查询出 from TaskInstance where type='fork' and processInstanceId=? and  ownForkId=? 的所有TaskInstance
+    并结束这些任务。
+    
+    嵌套fork的解决思路，进入第二个fork时，创建一个从属于上级fork节点的forkId的task，当到达这个fork的join时，则结束这个fork的taskInstance。
+    
+    
+    
+    
+    
+   × 创建ProcessVariable类，
+   
+   
+   * 支持退回操作。 要测试退回的操作，退回，退回再退回， forkId在这里是否会受到影响？ 
+   
+   
+   
+   * 任务争用。(多个人可以看到这个任务，然后某个人可以选择处理）
+   
+   
+   * 任务finish后，记得reload，然后判断状态。reload会改变任务的已有改变，该咋办？应该不是reload而是query。 
+     isFinishedTask(Long taskId)
+     
+   * join的waitInvoker的作用可能会是 join被重复enter（致使多次创建后面的任务），应该根据日志来查询是否
+     可以enter join node。 这个设计也可以用来支持 无task的ProcessNode作为fork的分支。
+     
+     
+   * 加入更多的eventInvoker。 enterInvoker,leaveInvoker,taskCreatedInvoker,taskFinishInvoker.
+   
+   
+   * 加入一个Timer，支持Task的Timer定义。
+   
+   * 增加一个ReservedContext. 只允许更改userVariables。 
+   
+   * 支持更简便的string写法：
+   
+   	{begin-->fork:fork1-->work1--->join1-->end,
+   		          fork1-->work2--->join1-->end,
+     begin<---------------work2,
+     			  fork1-->work3,
+     begin<---------------work3}
+   	 trans[
+   	 	begin_fork:退回{conditionInvoker:a.test,action:test.invoker,action:invoker2 },
+   	 	begin_fork_2:退回2{conditionInvoker:a.test,action:test.invoker,action:invoker2 }	
+   	 ]
+   	nodes[
+   		join1:{waitInvoker:test.test}
+   	
+   	}
+   	tasks[
+   	 	task1:{node:begin},
+   	 	task2:{node:work1}
+   	 	task2:{node:work1}
+   	 
+   	 ]
+   	
+   	
+   
+   
+   
+   
+ 
+ 
+

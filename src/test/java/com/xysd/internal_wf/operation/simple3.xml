@@ -1,0 +1,68 @@
+<process name="test_process"
+	taskClassName="com.xysd.internal_wf.domain.impl.StrTypeWorkflowTask"
+	processVariableClassName="com.xysd.internal_wf.domain.impl.StrTypeProcessVariable"
+	processLockerClassName="com.xysd.internal_wf.domain.impl.StrTypeProcessLocker"
+	processLogClassName="com.xysd.internal_wf.domain.impl.StrTypeProcessLog">
+
+	<begin id="begin">
+		<task name="task1"></task>
+
+		<transit id="default" to="fork1">
+			<action invoker="testAction.execute" />
+		</transit>
+	</begin>
+	<fork id="fork1">
+		<transit id="trans1" to="work1">
+			<action invoker="testAction.execute" />
+		</transit>
+		<transit id="trans2" to="fork2">
+			<action invoker="testAction.execute" />
+		</transit>
+	</fork>
+	<processNode id="work1">
+		<task name="task2"></task>
+		<transit id="trans3" to="join1">
+			<action invoker="testAction.execute" />
+		</transit>
+	</processNode>
+	
+	<fork id="fork2">
+		<transit id="trans4" to="work11">
+			<action invoker="testAction.execute" />
+		</transit>
+		<transit id="trans5" to="work12">
+			<action invoker="testAction.execute" />
+		</transit>
+	</fork>
+	<processNode id="work11">
+		<task name="task11"></task>
+		<transit id="trans6" to="join2">
+			<action invoker="testAction.execute" />
+		</transit>
+	</processNode>
+	<processNode id="work12">
+		<task name="task12"></task>
+		<transit id="trans7" to="join2">
+			<action invoker="testAction.execute" />
+		</transit>
+	</processNode>
+	
+	<join id="join2">
+
+		<transit id="trans8" to="join1">
+			<action invoker="testAction.execute" />
+		</transit>
+	</join>
+	<join id="join1">
+
+		<transit id="trans9" to="work2">
+			<action invoker="testAction.execute" />
+		</transit>
+	</join>
+
+	<processNode id="work2">
+		<task name="task3"></task>
+		
+	</processNode>
+
+</process>

@@ -1,0 +1,46 @@
+<process name="wait_invoker"
+	taskClassName="com.xysd.internal_wf.domain.impl.StrTypeWorkflowTask"
+	processVariableClassName="com.xysd.internal_wf.domain.impl.StrTypeProcessVariable"
+	processLockerClassName="com.xysd.internal_wf.domain.impl.StrTypeProcessLocker"
+	processLogClassName="com.xysd.internal_wf.domain.impl.StrTypeProcessLog">
+
+	<begin id="begin">
+		<task name="task1"></task>
+
+		<transit id="default" to="fork1">
+			<action invoker="testAction.execute" />
+		</transit>
+	</begin>
+	<fork id="fork1">
+		<transit id="trans1" to="work1">
+			<action invoker="testAction.execute" />
+		</transit>
+		<transit id="trans2" to="work2">
+			<action invoker="testAction.execute" />
+		</transit>
+	</fork>
+	<processNode id="work1">
+		<task name="task2"></task>
+		<transit id="trans3" to="join1">
+			<action invoker="testAction.execute" />
+		</transit>
+	</processNode>
+	<processNode id="work2">
+		<task name="task3"></task>
+		<transit id="trans4" to="join1">
+			<action invoker="testAction.execute" />
+		</transit>
+	</processNode>
+	<join id="join1" waitInvoker="waiter.wait">
+
+		<transit id="trans5" to="work3">
+			<action invoker="testAction.execute" />
+		</transit>
+	</join>
+
+	<processNode id="work3">
+		<task name="task4"></task>
+
+	</processNode>
+
+</process>

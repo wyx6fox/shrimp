@@ -1,0 +1,27 @@
+<process name="test_process" >
+
+	<begin id="begin">
+		<task name="task1">
+		</task>
+		
+		<transit id="default" to="work" >
+			
+		</transit>
+	</begin>
+	<determine id="determine">
+		<transit id="d1" to="end" conditionInvoker="" >
+			
+		</transit>
+		<transit id="d2" to="work" conditionInvoker="">
+			
+		</transit>
+	</determine>
+	<processNode id="work">
+		<task name="task2" ></task>
+		<transit id="default2" to="end" >
+			
+		</transit>
+	</processNode>
+
+	<end id="end"></end>
+</process>

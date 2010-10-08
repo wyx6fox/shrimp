@@ -1,0 +1,28 @@
+<process name="test" taskClassName="1"
+	processVariableClassName="2" processLockerClassName="3"
+	processLogClassName="4">
+
+	<begin id="begin">
+		<task name="task1"  limitInvoker="service.limit" expireInvoker="service.expire">
+			<assignment actorVar="actor1"
+				actorTypeVar="actorType1" creatorVar="creator1"
+				creatorTypeVar="creatorType1" projectIdVar="projectId1"
+				projectTypeVar="projectType1">
+			</assignment>
+		</task>
+		
+		<transit id="trans1" to="work" conditionInvoker="cond.isValid" >
+			<action invoker="action2.action"/>
+			<action invoker="action1.action"/>
+		</transit>
+	</begin>
+
+	<processNode id="work" enterInvoker="enterInvoker1" leaveInvoker="leaveInvoker1">
+		<task name="task2" taskCreatedInvoker="44" taskFinishedInvoker="55"></task>
+		<transit id="trans2" to="end" >
+			
+		</transit>
+	</processNode>
+
+	<end id="end"></end>
+</process>
