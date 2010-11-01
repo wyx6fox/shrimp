@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
  *  
  *  </processNode>
  * 
+ * 默认行为是：transitDerived-->enter--->leave方法。如果存在task，则enter创建完task之后，直接返回，不调用leave方法。
  * @author wyx6fox
  * 
  */

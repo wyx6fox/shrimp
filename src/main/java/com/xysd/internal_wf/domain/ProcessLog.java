@@ -10,6 +10,9 @@ import javax.persistence.Transient;
  * 
  * 流程流转日志记录。
  * 记录几个关键数据：流程实例ID（processInstanceId），当前节点ID（processNodeId），事件（event），分支的ID(forkId)
+ * 抽象属性： taskId,logId,parentLogId 
+ * 其中taskId表示生成任务日志的任务标识，parentLogId表示这次当前这次流转过程中的前面一次动作的日志。
+ * 通过parentLogId的记录，能够通过日志表跟踪得到一次流程流转过程中的事件发生过程。
  * 
  * 对于一个fork-join组合，在 fork.enter方法中将生成一个enter的Processlog实例，其中event="enter",forkId等于当前fork节点
  * 被分配的一个唯一标识。 在join.leave方法中将生成"leave"事件的日志，其中的forkId等于前面fork节点生成的forkId

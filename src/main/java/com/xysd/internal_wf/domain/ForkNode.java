@@ -1,8 +1,18 @@
 package com.xysd.internal_wf.domain;
 /**
+ *
+ * 表示一个分支节点，每一个ForkNode在运行时生成一个唯一的forkId。
+ * TaskInstance有两个关键属性：forkId,ownForkId,其中forkId表示
+ * 任务创建时所在fork-join流程中的当前的forkId，
+ * ownForkId属性比较特殊，它仅仅用于为嵌套的Fork节点创建一个“待结束”fork任务实例，逻辑如下：
+ * 在forkNode.enter方法中，在检测到当前fork嵌套于某个fork中时，生成一个特殊的的forktaskInstance,
+ * 这个forktaskInstance的forkId为父级fork的ForkId，ownForkId为当前fork的forkId.
  * 
- * 表示一个分支节点
+ * 在JoinNode.transitDerived方法作为enter方法的一个先决判断步骤，如果判断可以进入enter，则直接调用enter方法，否则返回。
+ * 判断可以进入enter的条件：
+ * 	 所有从属于当前forkId的taskInstances列表均已完成。为了避免并发冲突，这里查询逻辑使用了行级事务锁。
  * 
+ * 进入enter后，如果存在由当前fork节点生成的forkTaskInstance，则直接结束它。
  * @author wyx6fox
  *
  */
