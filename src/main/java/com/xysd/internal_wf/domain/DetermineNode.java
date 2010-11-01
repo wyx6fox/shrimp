@@ -1,5 +1,17 @@
 package com.xysd.internal_wf.domain;
-
+/**
+ * 
+ * 表示一个条件过滤节点，根据条件从多个transit中选择一条。
+ * 
+ * 每个transit声明有一个 条件选择器： conditionInvoker ，声明格式如下：
+ * 
+ * <transit id=... conditionInvoker={beanName}.{methodName}>...</transit>
+ * 
+ * 
+ * 
+ * @author wyx6fox
+ *
+ */
 public class DetermineNode extends ProcessNode {
 
 	public DetermineNode(String processNodeId) {

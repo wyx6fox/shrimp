@@ -6,20 +6,37 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+/**
+ * 
+ * 流程的节点的通用定义类。具体的子类根据行为特征分为：BeginNode，ForkNode，JoinNode,DetermineNode等等。
+ * 流程的驱动通过节点的三个方法（transitDerived，enter，leave）三个行为来驱动。
+ * 不同行为特征的节点在三个方法具体实现各不相同。
+ * 
+ * 一个ProcessNode的定义的XML描述大致如下：
+ * <processNode id=... enterInvoker=... leaveInvoker=...>
+ * 	   <task name="task1">...</task>
+ * 		<transit id="trans1" to="end" >...</transit>
+ *      <transit id="trans2" to="end" >...</transit>
+ *  
+ *  </processNode>
+ * 
+ * @author wyx6fox
+ * 
+ */
 public class ProcessNode implements ProcessNodeListener {
 
 	protected Log logger = LogFactory.getLog(this.getClass());
 
-	protected String processNodeId;
+	protected String processNodeId; //流程节点的唯一标识
 
+	// 当前节点出去的迁移路线
 	protected Map<String, Transition> transitions = new LinkedHashMap<String, Transition>();
 
-	protected ProcessNodeTask task; // 只支持一个Task的生成
+	protected ProcessNodeTask task; // ProcessNode内的task，将会在enter中生成taskInstance
 	
-	protected String enterInvoker;
+	protected String enterInvoker; //进入这个节点的invoker ，将会在enter中被调用
 	
-	protected String leaveInvoker;
+	protected String leaveInvoker; //离开这个节点的invoker，将会在leave中被调用
 
 	
 

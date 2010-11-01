@@ -1,5 +1,11 @@
 package com.xysd.internal_wf.domain;
-
+/**
+ * 
+ * 表示一个分支节点
+ * 
+ * @author wyx6fox
+ *
+ */
 public class ForkNode extends ProcessNode {
 
 	public ForkNode(String processNodeId) {
