@@ -8,6 +8,12 @@ import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+/**
+ * 
+ * 
+ * @author wyx6fox
+ *
+ */
 @MappedSuperclass
 public abstract class ProcessTaskInstance {
 	
@@ -50,12 +56,13 @@ public abstract class ProcessTaskInstance {
 	
 	protected String forkId; //fork之后创建的task需要记录
 	
-	protected String ownForkId;
+	protected String ownForkId; //嵌套的fork创建forkTaskInstance时将自己的forkId作为ownForkId保存
 	
 	protected String taskType;
 	
-	protected String waitingProcessInstanceId; //子流程时用到，子流程设计思想：子流程Node是一个forkNode（自动迁移节点的一种），ProcessEndNode所关联的任务finish
-	//是，会搜索所有waitingProcessInstanceId==currProcessInstanceId&&status=='open'的tasks，然后依次finsih这些task。
+	protected String waitingProcessInstanceId; 
+	//子流程时用到，子流程设计思想：子流程Node是一个forkNode，ProcessEndNode所关联的任务finish
+	//时，会搜索所有waitingProcessInstanceId==currProcessInstanceId&&status=='open'的tasks，然后依次finsih这些task。
 	
 	//task.finish时，会检查所关联的processNode,
 	//如果所关联的processNode所拥有的所有任务都已执行完毕（查询返回0： from task t where t.processNode=:currNode and t.processInstanceId=:currprocessInstanceId and t.status='open')
